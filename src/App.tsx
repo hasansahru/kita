@@ -13,12 +13,13 @@ import { TransactionModal } from './components/TransactionModal';
 import { AuditLogModal } from './components/AuditLogModal';
 import { ExportModal } from './components/ExportModal';
 import { SettingsModal } from './components/SettingsModal';
+import { CloudSyncModal } from './components/CloudSyncModal';
 import { TransactionType } from './types';
 import { formatRupiah, formatDateIndo } from './utils/formatters';
-import { Heart, Plus, Minus, Layers, TrendingUp, Sparkles, Building2, Home, Target, PlusCircle, History, BarChart3, Download } from 'lucide-react';
+import { Heart, Plus, Minus, Layers, TrendingUp, Sparkles, Building2, Home, Target, PlusCircle, History, BarChart3, Download, Cloud } from 'lucide-react';
 
 const MainDashboard: React.FC = () => {
-  const { family, summary, transactions, goals, hideBalance, isAuthenticated } = useSavings();
+  const { family, summary, transactions, goals, hideBalance, isAuthenticated, cloudSync } = useSavings();
 
   // Modals state
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
@@ -28,6 +29,7 @@ const MainDashboard: React.FC = () => {
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isCloudSyncModalOpen, setIsCloudSyncModalOpen] = useState(false);
 
   // Tab view on mobile/desktop
   const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'GOALS' | 'HISTORY' | 'ANALYTICS'>('OVERVIEW');
@@ -56,6 +58,7 @@ const MainDashboard: React.FC = () => {
         onOpenExport={() => setIsExportModalOpen(true)}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
         onOpenAuditLogs={() => setIsAuditModalOpen(true)}
+        onOpenCloudSync={() => setIsCloudSyncModalOpen(true)}
       />
 
       {/* 2. Main Content Area */}
@@ -359,6 +362,12 @@ const MainDashboard: React.FC = () => {
       <SettingsModal
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}
+        onOpenCloudSync={() => setIsCloudSyncModalOpen(true)}
+      />
+
+      <CloudSyncModal
+        isOpen={isCloudSyncModalOpen}
+        onClose={() => setIsCloudSyncModalOpen(false)}
       />
     </div>
   );

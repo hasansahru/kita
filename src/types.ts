@@ -106,3 +106,16 @@ export interface MonthlyBreakdown {
   netSavings: number;
   endingBalance: number;
 }
+
+export type CloudSyncStatus = 'offline' | 'connecting' | 'synced' | 'error';
+
+export interface CloudSyncConfig {
+  isEnabled: boolean;
+  syncCode: string; // Kode Sinkronisasi Pasangan (misal: "KITA-782910")
+  firebaseProjectId?: string;
+  firebaseApiKey?: string;
+  firebaseAppId?: string;
+  lastSyncedAt?: string;
+  status: CloudSyncStatus;
+  errorMessage?: string;
+}

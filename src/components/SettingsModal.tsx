@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { X, Settings, RotateCcw, Building, Users, Check, AlertTriangle, Sun, Moon } from 'lucide-react';
+import { X, Settings, RotateCcw, Building, Users, Check, AlertTriangle, Sun, Moon, Cloud, ChevronRight } from 'lucide-react';
 import { useSavings } from '../context/SavingsContext';
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenCloudSync?: () => void;
 }
 
-export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-  const { family, updateFamily, resetToDefaultData, isDarkMode, toggleDarkMode } = useSavings();
+export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onOpenCloudSync }) => {
+  const { family, updateFamily, resetToDefaultData, isDarkMode, toggleDarkMode, cloudSync } = useSavings();
 
   const [name, setName] = useState('');
   const [husbandName, setHusbandName] = useState('');
@@ -250,6 +251,37 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
               </button>
             </div>
           </div>
+
+          {/* Cloud Sync Integration Quick Access */}
+          {onOpenCloudSync && (
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-800">
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onOpenCloudSync();
+                }}
+                className="w-full flex items-center justify-between p-3 rounded-xl bg-teal-50/70 hover:bg-teal-100/70 dark:bg-teal-950/40 dark:hover:bg-teal-900/50 border border-teal-200 dark:border-teal-800 transition-all text-left group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-lg bg-teal-600 text-white shrink-0 shadow-xs">
+                    <Cloud className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-xs text-teal-950 dark:text-teal-200 block">
+                      Sinkronisasi Cloud Suami & Istri
+                    </span>
+                    <span className="text-[11px] text-teal-700 dark:text-teal-400">
+                      {cloudSync.isEnabled && cloudSync.status === 'synced'
+                        ? '🟢 Tersinkron Real-time (Kode: ' + cloudSync.syncCode + ')'
+                        : 'Hubungkan 2 HP agar saldo & transaksi otomatis sinkron'}
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-teal-600 dark:text-teal-400 group-hover:translate-x-0.5 transition-transform shrink-0" />
+              </button>
+            </div>
+          )}
 
           {/* Reset Demo Data */}
           <div className="pt-2 border-t border-slate-200 dark:border-slate-800">

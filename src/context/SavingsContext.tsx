@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import {
   Family,
   SavingsGoal,
@@ -8,6 +8,8 @@ import {
   BalanceSummary,
   MonthlyBreakdown,
   GoalAllocation,
+  CloudSyncConfig,
+  CloudSyncStatus,
 } from '../types';
 import {
   INITIAL_FAMILY,
@@ -20,6 +22,14 @@ import {
   calculateGoalBalances,
   calculateMonthlyBreakdown,
 } from '../utils/calculations';
+import {
+  subscribeToCloudUpdates,
+  pushToCloud,
+  fetchRemoteOnce,
+  generateRandomSyncCode,
+  isFirebaseConfigured,
+  CloudPayload,
+} from '../services/cloudSyncService';
 
 interface SavingsContextType {
   family: Family;
@@ -33,6 +43,12 @@ interface SavingsContextType {
   summary: BalanceSummary;
   goalBalances: Record<string, number>;
   monthlyBreakdowns: MonthlyBreakdown[];
+  
+  // Cloud Sync
+  cloudSync: CloudSyncConfig;
+  updateCloudSyncConfig: (config: Partial<CloudSyncConfig>) => void;
+  syncNow: () => Promise<boolean>;
+  generateSyncCode: () => string;
   
   // Actions
   loginWithPin: (role: Role, pin: string) => { success: boolean; error?: string };
@@ -81,6 +97,7 @@ const STORAGE_KEYS = {
   AUTH_SESSION: 'kita_savings_auth_session_v1',
   HIDE_BALANCE: 'kita_savings_hide_balance_v1',
   THEME: 'kita_savings_dark_mode_v1',
+  CLOUD_SYNC: 'kita_savings_cloud_sync_v1',
 };
 
 export const SavingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -149,6 +166,167 @@ export const SavingsProvider: React.FC<{ children: React.ReactNode }> = ({ child
       return false;
     }
   });
+
+  const [cloudSync, setCloudSync] = useState<CloudSyncConfig>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.CLOUD_SYNC);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch {
+      // fallback
+    }
+    return {
+      isEnabled: false,
+      syncCode: '',
+      status: 'offline' as CloudSyncStatus,
+    };
+  });
+
+  const isSyncingFromRemoteRef = useRef<boolean>(false);
+  const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Save Cloud Sync Config to localStorage
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.CLOUD_SYNC, JSON.stringify(cloudSync));
+  }, [cloudSync]);
+
+  const updateCloudSyncConfig = useCallback((newConfig: Partial<CloudSyncConfig>) => {
+    setCloudSync((prev) => ({
+      ...prev,
+      ...newConfig,
+    }));
+  }, []);
+
+  const generateSyncCode = useCallback(() => {
+    return generateRandomSyncCode();
+  }, []);
+
+  // Listen to remote changes when cloud sync is enabled
+  useEffect(() => {
+    if (!cloudSync.isEnabled || !cloudSync.syncCode) {
+      setCloudSync((prev) => (prev.status !== 'offline' ? { ...prev, status: 'offline' } : prev));
+      return;
+    }
+
+    setCloudSync((prev) => ({ ...prev, status: 'connecting', errorMessage: undefined }));
+
+    const unsubscribe = subscribeToCloudUpdates(
+      cloudSync.syncCode,
+      cloudSync,
+      (remotePayload: CloudPayload) => {
+        // Mark flag to avoid echo push
+        isSyncingFromRemoteRef.current = true;
+
+        if (remotePayload.family) {
+          setFamily(remotePayload.family);
+        }
+        if (Array.isArray(remotePayload.goals)) {
+          setGoals(remotePayload.goals);
+        }
+        if (Array.isArray(remotePayload.transactions)) {
+          setTransactions(remotePayload.transactions);
+        }
+        if (Array.isArray(remotePayload.auditLogs)) {
+          setAuditLogs(remotePayload.auditLogs);
+        }
+
+        setCloudSync((prev) => ({
+          ...prev,
+          status: 'synced',
+          lastSyncedAt: new Date().toISOString(),
+          errorMessage: undefined,
+        }));
+
+        setTimeout(() => {
+          isSyncingFromRemoteRef.current = false;
+        }, 300);
+      },
+      (errorMessage: string) => {
+        setCloudSync((prev) => ({
+          ...prev,
+          status: 'error',
+          errorMessage,
+        }));
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [cloudSync.isEnabled, cloudSync.syncCode, cloudSync.firebaseApiKey, cloudSync.firebaseProjectId]);
+
+  // Push local changes to cloud if sync enabled and not an echo update
+  useEffect(() => {
+    if (!cloudSync.isEnabled || !cloudSync.syncCode) return;
+    if (isSyncingFromRemoteRef.current) return;
+
+    if (syncTimeoutRef.current) {
+      clearTimeout(syncTimeoutRef.current);
+    }
+
+    syncTimeoutRef.current = setTimeout(async () => {
+      const payload: CloudPayload = {
+        family,
+        goals,
+        transactions,
+        auditLogs,
+        updatedAt: new Date().toISOString(),
+        updatedByRole: currentRole,
+      };
+
+      const res = await pushToCloud(cloudSync.syncCode, cloudSync, payload);
+      if (res.success) {
+        setCloudSync((prev) => ({
+          ...prev,
+          status: 'synced',
+          lastSyncedAt: new Date().toISOString(),
+          errorMessage: undefined,
+        }));
+      } else {
+        setCloudSync((prev) => ({
+          ...prev,
+          status: 'error',
+          errorMessage: res.error,
+        }));
+      }
+    }, 1000);
+
+    return () => {
+      if (syncTimeoutRef.current) {
+        clearTimeout(syncTimeoutRef.current);
+      }
+    };
+  }, [family, goals, transactions, auditLogs, cloudSync.isEnabled, cloudSync.syncCode]);
+
+  const syncNow = useCallback(async (): Promise<boolean> => {
+    if (!cloudSync.syncCode) return false;
+    setCloudSync((prev) => ({ ...prev, status: 'connecting' }));
+
+    // Push local first
+    const payload: CloudPayload = {
+      family,
+      goals,
+      transactions,
+      auditLogs,
+      updatedAt: new Date().toISOString(),
+      updatedByRole: currentRole,
+    };
+
+    const pushRes = await pushToCloud(cloudSync.syncCode, cloudSync, payload);
+    if (!pushRes.success) {
+      setCloudSync((prev) => ({ ...prev, status: 'error', errorMessage: pushRes.error }));
+      return false;
+    }
+
+    setCloudSync((prev) => ({
+      ...prev,
+      status: 'synced',
+      lastSyncedAt: new Date().toISOString(),
+      errorMessage: undefined,
+    }));
+    return true;
+  }, [cloudSync, family, goals, transactions, auditLogs, currentRole]);
 
   // Sync to LocalStorage
   useEffect(() => {
@@ -460,6 +638,10 @@ export const SavingsProvider: React.FC<{ children: React.ReactNode }> = ({ child
         summary,
         goalBalances,
         monthlyBreakdowns,
+        cloudSync,
+        updateCloudSyncConfig,
+        syncNow,
+        generateSyncCode,
         loginWithPin,
         logout,
         setCurrentRole,

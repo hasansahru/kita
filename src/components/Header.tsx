@@ -13,6 +13,8 @@ import {
   Heart,
   LogOut,
   Lock,
+  Cloud,
+  RefreshCw,
 } from 'lucide-react';
 import { useSavings } from '../context/SavingsContext';
 
@@ -20,12 +22,14 @@ interface HeaderProps {
   onOpenExport: () => void;
   onOpenSettings: () => void;
   onOpenAuditLogs: () => void;
+  onOpenCloudSync: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   onOpenExport,
   onOpenSettings,
   onOpenAuditLogs,
+  onOpenCloudSync,
 }) => {
   const {
     family,
@@ -38,6 +42,7 @@ export const Header: React.FC<HeaderProps> = ({
     toggleDarkMode,
     summary,
     auditLogs,
+    cloudSync,
   } = useSavings();
 
   const [showRoleMenu, setShowRoleMenu] = useState(false);
@@ -190,6 +195,47 @@ export const Header: React.FC<HeaderProps> = ({
             {auditLogs.length > 0 && (
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-teal-500 rounded-full" />
             )}
+          </button>
+
+          {/* Cloud Sync Status / Modal Trigger */}
+          <button
+            id="open-cloud-sync-button"
+            type="button"
+            onClick={onOpenCloudSync}
+            className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-all shadow-xs ${
+              cloudSync.isEnabled && cloudSync.status === 'synced'
+                ? 'bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                : cloudSync.status === 'connecting'
+                ? 'bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/60 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                : cloudSync.status === 'error'
+                ? 'bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'
+                : 'bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+            }`}
+            title={
+              cloudSync.isEnabled && cloudSync.status === 'synced'
+                ? 'Sinkronisasi Cloud Aktif (Tersambung Real-time)'
+                : 'Sinkronisasi Suami-Istri (Klik untuk menghubungkan)'
+            }
+          >
+            <Cloud className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">
+              {cloudSync.isEnabled && cloudSync.status === 'synced'
+                ? 'Sinkron'
+                : cloudSync.status === 'connecting'
+                ? 'Menghubungkan...'
+                : 'Cloud'}
+            </span>
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                cloudSync.isEnabled && cloudSync.status === 'synced'
+                  ? 'bg-emerald-500'
+                  : cloudSync.status === 'connecting'
+                  ? 'bg-amber-500 animate-pulse'
+                  : cloudSync.status === 'error'
+                  ? 'bg-rose-500'
+                  : 'bg-slate-400'
+              }`}
+            />
           </button>
 
           {/* Dark / Light Mode Toggle Button */}
