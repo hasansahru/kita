@@ -171,15 +171,20 @@ export const SavingsProvider: React.FC<{ children: React.ReactNode }> = ({ child
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.CLOUD_SYNC);
       if (saved) {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        return {
+          ...parsed,
+          syncCode: parsed.syncCode || 'KITA-BERSAMA',
+          isEnabled: parsed.isEnabled !== undefined ? parsed.isEnabled : true,
+        };
       }
     } catch {
       // fallback
     }
     return {
-      isEnabled: false,
-      syncCode: '',
-      status: 'offline' as CloudSyncStatus,
+      isEnabled: true,
+      syncCode: 'KITA-BERSAMA',
+      status: 'connecting' as CloudSyncStatus,
     };
   });
 
