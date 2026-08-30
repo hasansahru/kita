@@ -12,6 +12,7 @@ import {
   History,
   Heart,
   LogOut,
+  Lock,
 } from 'lucide-react';
 import { useSavings } from '../context/SavingsContext';
 
@@ -221,6 +222,18 @@ export const Header: React.FC<HeaderProps> = ({
             title="Pengaturan Rekening & Pasangan"
           >
             <Settings className="w-4 h-4" />
+          </button>
+
+          {/* Prominent Lock / Logout Button */}
+          <button
+            id="lock-app-button"
+            type="button"
+            onClick={logout}
+            className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-xs font-semibold transition-all shadow-xs"
+            title="Kunci Aplikasi / Keluar (Harus masukkan PIN untuk masuk kembali)"
+          >
+            <Lock className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+            <span className="hidden sm:inline">Kunci</span>
           </button>
         </div>
       </div>

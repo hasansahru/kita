@@ -94,14 +94,7 @@ export const SavingsProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   });
 
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.AUTH_SESSION);
-      return saved === 'true';
-    } catch {
-      return false;
-    }
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const [currentRole, setCurrentRoleState] = useState<Role>(() => {
     try {
