@@ -37,7 +37,7 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({ isOpen, onClose 
   useEffect(() => {
     if (isOpen) {
       setSyncCodeInput(cloudSync.syncCode || '');
-      setProjectIdInput(cloudSync.firebaseProjectId || '');
+      setProjectIdInput(cloudSync.firebaseProjectId || 'kita-51e3e');
       setApiKeyInput(cloudSync.firebaseApiKey || '');
       setAppIdInput(cloudSync.firebaseAppId || '');
       setSuccessNotice(null);

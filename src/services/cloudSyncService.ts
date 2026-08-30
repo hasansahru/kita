@@ -37,12 +37,12 @@ const getEnvVar = (key: string): string => {
 
 // Default built-in / env configuration (if provided via VITE_ envs)
 const DEFAULT_FIREBASE_CONFIG = {
-  apiKey: getEnvVar('VITE_FIREBASE_API_KEY'),
-  authDomain: getEnvVar('VITE_FIREBASE_AUTH_DOMAIN'),
-  projectId: getEnvVar('VITE_FIREBASE_PROJECT_ID'),
-  storageBucket: getEnvVar('VITE_FIREBASE_STORAGE_BUCKET'),
-  messagingSenderId: getEnvVar('VITE_FIREBASE_MESSAGING_SENDER_ID'),
-  appId: getEnvVar('VITE_FIREBASE_APP_ID'),
+  apiKey: getEnvVar('VITE_FIREBASE_API_KEY') || '',
+  authDomain: getEnvVar('VITE_FIREBASE_AUTH_DOMAIN') || 'kita-51e3e.firebaseapp.com',
+  projectId: getEnvVar('VITE_FIREBASE_PROJECT_ID') || 'kita-51e3e',
+  storageBucket: getEnvVar('VITE_FIREBASE_STORAGE_BUCKET') || 'kita-51e3e.appspot.com',
+  messagingSenderId: getEnvVar('VITE_FIREBASE_MESSAGING_SENDER_ID') || '213468010438',
+  appId: getEnvVar('VITE_FIREBASE_APP_ID') || '',
 };
 
 export function isFirebaseConfigured(config?: Partial<CloudSyncConfig>): boolean {
