@@ -1,0 +1,6 @@
+{
+  "name": "KITA - Tabungan Bersama Suami Istri",
+  "description": "Aplikasi pencatatan satu rekening tabungan bersama suami istri dengan alokasi target virtual, kontribusi transparan, dan verifikasi saldo presisi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
