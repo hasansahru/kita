@@ -53,17 +53,17 @@ const MainDashboard: React.FC = () => {
       />
 
       {/* 2. Main Content Area */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-5 sm:py-7 space-y-6">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-7 space-y-5 sm:space-y-6">
         {/* Navigation Tabs on Mobile/Desktop */}
-        <div className="flex items-center justify-between gap-2 overflow-x-auto pb-1 no-print border-b border-slate-200 dark:border-slate-800">
-          <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center justify-between gap-2 overflow-x-auto pb-1 no-print border-b border-slate-200 dark:border-slate-800 scrollbar-none">
+          <div className="flex items-center gap-1 sm:gap-2">
             <button
               type="button"
               onClick={() => setActiveTab('OVERVIEW')}
-              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
                 activeTab === 'OVERVIEW'
-                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  ? 'bg-teal-600 text-white dark:bg-teal-500 dark:text-slate-950 shadow-sm shadow-teal-600/20'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800'
               }`}
             >
               Dashboard Utama
@@ -72,10 +72,10 @@ const MainDashboard: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('GOALS')}
-              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
                 activeTab === 'GOALS'
-                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  ? 'bg-teal-600 text-white dark:bg-teal-500 dark:text-slate-950 shadow-sm shadow-teal-600/20'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800'
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
@@ -85,10 +85,10 @@ const MainDashboard: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('HISTORY')}
-              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
                 activeTab === 'HISTORY'
-                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  ? 'bg-teal-600 text-white dark:bg-teal-500 dark:text-slate-950 shadow-sm shadow-teal-600/20'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800'
               }`}
             >
               Histori Transaksi
@@ -97,10 +97,10 @@ const MainDashboard: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('ANALYTICS')}
-              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
                 activeTab === 'ANALYTICS'
-                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  ? 'bg-teal-600 text-white dark:bg-teal-500 dark:text-slate-950 shadow-sm shadow-teal-600/20'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800'
               }`}
             >
               <TrendingUp className="w-3.5 h-3.5" />
