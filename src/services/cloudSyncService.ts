@@ -62,6 +62,20 @@ export function getEffectiveFirebaseConfig(config?: Partial<CloudSyncConfig>) {
   };
 }
 
+export function getFriendlyErrorMessage(err: unknown): string {
+  const msg = (err as Error)?.message || String(err);
+  if (msg.includes('permission-denied') || msg.includes('Missing or insufficient permissions')) {
+    return 'Izin database ditolak (permission-denied). Buka Firebase Console > Firestore Database > tab Rules, ubah menjadi: "allow read, write: if true;" lalu klik Publish.';
+  }
+  if (msg.includes('not-found') || msg.includes('Database not found') || msg.includes('does not exist')) {
+    return 'Database Firestore belum dibuat. Buka Firebase Console > Databases & Storage > Firestore Database, lalu klik tombol "Create database".';
+  }
+  if (msg.includes('network') || msg.includes('unavailable')) {
+    return 'Koneksi internet bermasalah. Mencoba menghubungkan kembali...';
+  }
+  return msg;
+}
+
 export function initFirebase(config?: Partial<CloudSyncConfig>): Firestore | null {
   try {
     const fbConfig = getEffectiveFirebaseConfig(config);
@@ -107,7 +121,7 @@ export function subscribeToCloudUpdates(
 
   const db = initFirebase(config);
   if (!db) {
-    onError('Konfigurasi Firebase belum diatur. Masukkan Project ID & API Key di menu Sinkronisasi Cloud.');
+    onError('Konfigurasi Firebase belum lengkap.');
     return () => {};
   }
 
@@ -126,7 +140,7 @@ export function subscribeToCloudUpdates(
       },
       (error) => {
         console.error('[CloudSync] Firestore listener error:', error);
-        onError(`Koneksi cloud terganggu: ${error.message}`);
+        onError(getFriendlyErrorMessage(error));
       }
     );
 
@@ -137,8 +151,7 @@ export function subscribeToCloudUpdates(
       }
     };
   } catch (err: unknown) {
-    const error = err as Error;
-    onError(error?.message || 'Gagal memulai koneksi sinkronisasi cloud');
+    onError(getFriendlyErrorMessage(err));
     return () => {};
   }
 }
@@ -173,9 +186,8 @@ export async function pushToCloud(
 
     return { success: true };
   } catch (err: unknown) {
-    const error = err as Error;
-    console.error('[CloudSync] Failed to push to cloud:', error);
-    return { success: false, error: error?.message || 'Gagal mengunggah ke cloud' };
+    console.error('[CloudSync] Failed to push to cloud:', err);
+    return { success: false, error: getFriendlyErrorMessage(err) };
   }
 }
 

@@ -47,7 +47,7 @@ interface SavingsContextType {
   // Cloud Sync
   cloudSync: CloudSyncConfig;
   updateCloudSyncConfig: (config: Partial<CloudSyncConfig>) => void;
-  syncNow: () => Promise<boolean>;
+  syncNow: (overrideCode?: string, overrideConfig?: Partial<CloudSyncConfig>) => Promise<boolean>;
   generateSyncCode: () => string;
   
   // Actions
@@ -304,34 +304,71 @@ export const SavingsProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
   }, [family, goals, transactions, auditLogs, cloudSync.isEnabled, cloudSync.syncCode]);
 
-  const syncNow = useCallback(async (): Promise<boolean> => {
-    if (!cloudSync.syncCode) return false;
-    setCloudSync((prev) => ({ ...prev, status: 'connecting' }));
+  const syncNow = useCallback(
+    async (overrideCode?: string, overrideConfig?: Partial<CloudSyncConfig>): Promise<boolean> => {
+      const activeCode = (overrideCode || cloudSync.syncCode || '').trim().toUpperCase();
+      if (!activeCode) return false;
 
-    // Push local first
-    const payload: CloudPayload = {
-      family,
-      goals,
-      transactions,
-      auditLogs,
-      updatedAt: new Date().toISOString(),
-      updatedByRole: currentRole,
-    };
+      const activeConfig: Partial<CloudSyncConfig> = {
+        ...cloudSync,
+        ...overrideConfig,
+        syncCode: activeCode,
+        isEnabled: true,
+      };
 
-    const pushRes = await pushToCloud(cloudSync.syncCode, cloudSync, payload);
-    if (!pushRes.success) {
-      setCloudSync((prev) => ({ ...prev, status: 'error', errorMessage: pushRes.error }));
-      return false;
-    }
+      setCloudSync((prev) => ({ ...prev, ...activeConfig, status: 'connecting', errorMessage: undefined }));
 
-    setCloudSync((prev) => ({
-      ...prev,
-      status: 'synced',
-      lastSyncedAt: new Date().toISOString(),
-      errorMessage: undefined,
-    }));
-    return true;
-  }, [cloudSync, family, goals, transactions, auditLogs, currentRole]);
+      // Check if remote already exists first
+      const remoteRes = await fetchRemoteOnce(activeCode, activeConfig);
+      if (remoteRes.success && remoteRes.data && remoteRes.data.family) {
+        // Hydrate from remote
+        isSyncingFromRemoteRef.current = true;
+        setFamily(remoteRes.data.family);
+        if (Array.isArray(remoteRes.data.goals)) setGoals(remoteRes.data.goals);
+        if (Array.isArray(remoteRes.data.transactions)) setTransactions(remoteRes.data.transactions);
+        if (Array.isArray(remoteRes.data.auditLogs)) setAuditLogs(remoteRes.data.auditLogs);
+
+        setCloudSync((prev) => ({
+          ...prev,
+          ...activeConfig,
+          status: 'synced',
+          lastSyncedAt: new Date().toISOString(),
+          errorMessage: undefined,
+        }));
+
+        setTimeout(() => {
+          isSyncingFromRemoteRef.current = false;
+        }, 300);
+        return true;
+      }
+
+      // If remote does not exist yet or empty, push current local state to cloud
+      const payload: CloudPayload = {
+        family,
+        goals,
+        transactions,
+        auditLogs,
+        updatedAt: new Date().toISOString(),
+        updatedByRole: currentRole,
+      };
+
+      const pushRes = await pushToCloud(activeCode, activeConfig, payload);
+      if (!pushRes.success) {
+        setCloudSync((prev) => ({ ...prev, ...activeConfig, status: 'error', errorMessage: pushRes.error }));
+        return false;
+      }
+
+      setCloudSync((prev) => ({
+        ...prev,
+        ...activeConfig,
+        status: 'synced',
+        lastSyncedAt: new Date().toISOString(),
+        errorMessage: undefined,
+      }));
+      return true;
+    },
+    [cloudSync, family, goals, transactions, auditLogs, currentRole]
+  );
 
   // Sync to LocalStorage
   useEffect(() => {

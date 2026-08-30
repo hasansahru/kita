@@ -36,10 +36,10 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({ isOpen, onClose 
 
   useEffect(() => {
     if (isOpen) {
-      setSyncCodeInput(cloudSync.syncCode || '');
+      setSyncCodeInput(cloudSync.syncCode || 'KITA-BERSAMA');
       setProjectIdInput(cloudSync.firebaseProjectId || 'kita-51e3e');
-      setApiKeyInput(cloudSync.firebaseApiKey || '');
-      setAppIdInput(cloudSync.firebaseAppId || '');
+      setApiKeyInput(cloudSync.firebaseApiKey || 'AIzaSyAQIxG-8UlMVZ9p_HyTAIvCRMq31CpgGi0');
+      setAppIdInput(cloudSync.firebaseAppId || '1:213468010438:web:89175bd0495824010bc4c7');
       setSuccessNotice(null);
     }
   }, [isOpen, cloudSync]);
@@ -64,7 +64,7 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({ isOpen, onClose 
   const handleShareToWhatsApp = () => {
     if (!syncCodeInput) return;
     const text = encodeURIComponent(
-      `Sayang, ini Kode Sinkronisasi Tabungan Bersama KITA: *${syncCodeInput}*\n\nBuka aplikasi Tabungan Kita, klik ikon Awan (Sinkronisasi), lalu tempel kode ini agar HP kita otomatis terhubung 1 rekening real-time! ❤️`
+      `Sayang, ini Kode Sinkronisasi Tabungan Bersama KITA: *${syncCodeInput}*\n\nBuka aplikasi Tabungan Kita, klik ikon Awan (Sinkronisasi), lalu klik Hubungkan agar HP kita otomatis terhubung 1 rekening real-time! ❤️`
     );
     window.open(`https://wa.me/?text=${text}`, '_blank');
   };
@@ -78,16 +78,15 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({ isOpen, onClose 
     }
 
     setIsSyncing(true);
-    updateCloudSyncConfig({
+    const success = await syncNow(cleanCode, {
       isEnabled: true,
       syncCode: cleanCode,
-      firebaseProjectId: projectIdInput.trim() || undefined,
-      firebaseApiKey: apiKeyInput.trim() || undefined,
-      firebaseAppId: appIdInput.trim() || undefined,
+      firebaseProjectId: projectIdInput.trim() || 'kita-51e3e',
+      firebaseApiKey: apiKeyInput.trim() || 'AIzaSyAQIxG-8UlMVZ9p_HyTAIvCRMq31CpgGi0',
+      firebaseAppId: appIdInput.trim() || '1:213468010438:web:89175bd0495824010bc4c7',
     });
-
-    const success = await syncNow();
     setIsSyncing(false);
+
     if (success) {
       setSuccessNotice('Berhasil terhubung ke Cloud! Data otomatis tersinkronisasi antar-perangkat.');
     }
