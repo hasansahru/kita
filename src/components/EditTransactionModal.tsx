@@ -3,6 +3,7 @@ import { X, Edit3, ShieldAlert, History, Trash2, ArrowDownLeft, ArrowUpRight } f
 import { useSavings } from '../context/SavingsContext';
 import { Transaction, Role, TransactionType, GoalAllocation } from '../types';
 import { formatRupiah } from '../utils/formatters';
+import { DeleteTransactionModal } from './DeleteTransactionModal';
 
 interface EditTransactionModalProps {
   isOpen: boolean;
@@ -21,7 +22,6 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
     goals,
     goalBalances,
     editTransaction,
-    deleteTransaction,
   } = useSavings();
 
   const [type, setType] = useState<TransactionType>('DEPOSIT');
@@ -32,6 +32,7 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
   const [selectedGoalId, setSelectedGoalId] = useState<string>('UNALLOCATED');
   const [reason, setReason] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (transaction) {
@@ -90,23 +91,17 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
   };
 
   const handleDelete = () => {
-    const deleteReason = window.prompt(
-      'Masukkan alasan pembatalan/penghapusan transaksi ini (wajib untuk audit log):',
-      'Koreksi duplikasi transaksi'
-    );
-    if (deleteReason && deleteReason.trim()) {
-      deleteTransaction(transaction.id, deleteReason.trim());
-      onClose();
-    }
+    setIsDeleteModalOpen(true);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
-      <div
-        className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden my-6"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
+    <>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
+        <div
+          className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden my-6"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-amber-50/50 dark:bg-amber-950/20">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-amber-500 text-white shadow-sm">
@@ -285,5 +280,16 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
         </form>
       </div>
     </div>
+
+    {/* Delete Confirmation Modal */}
+    <DeleteTransactionModal
+      isOpen={isDeleteModalOpen}
+      onClose={() => {
+        setIsDeleteModalOpen(false);
+        onClose();
+      }}
+      transaction={transaction}
+    />
+  </>
   );
 };

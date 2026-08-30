@@ -5,6 +5,7 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   Edit2,
+  Trash2,
   Calendar,
   Layers,
   X,
@@ -15,6 +16,7 @@ import { useSavings } from '../context/SavingsContext';
 import { Transaction, Role, TransactionType } from '../types';
 import { formatRupiah, formatDateIndo, formatShortDate } from '../utils/formatters';
 import { EditTransactionModal } from './EditTransactionModal';
+import { DeleteTransactionModal } from './DeleteTransactionModal';
 
 interface TransactionHistoryProps {
   onAddTransaction: () => void;
@@ -37,6 +39,9 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
 
   const [transactionToEdit, setTransactionToEdit] = useState<Transaction | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   // Available unique months from transactions
   const availableMonths = useMemo(() => {
@@ -97,6 +102,11 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   const handleOpenEdit = (tx: Transaction) => {
     setTransactionToEdit(tx);
     setIsEditOpen(true);
+  };
+
+  const handleOpenDelete = (tx: Transaction) => {
+    setTransactionToDelete(tx);
+    setIsDeleteOpen(true);
   };
 
   return (
@@ -330,15 +340,27 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                     {formatRupiah(tx.amount, hideBalance)}
                   </span>
 
-                  <button
-                    type="button"
-                    onClick={() => handleOpenEdit(tx)}
-                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors mt-0.5"
-                    title="Edit transaksi dengan audit log"
-                  >
-                    <Edit2 className="w-3 h-3" />
-                    <span>Edit</span>
-                  </button>
+                  <div className="flex items-center gap-1 mt-1">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEdit(tx)}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                      title="Edit transaksi dengan audit log"
+                    >
+                      <Edit2 className="w-3 h-3" />
+                      <span>Edit</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleOpenDelete(tx)}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-500/80 hover:text-rose-600 dark:text-rose-400/80 dark:hover:text-rose-400 px-2 py-1 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+                      title="Hapus transaksi dengan audit log"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      <span>Hapus</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             );
@@ -351,6 +373,13 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
         isOpen={isEditOpen}
         onClose={() => setIsEditOpen(false)}
         transaction={transactionToEdit}
+      />
+
+      {/* Delete Transaction Modal */}
+      <DeleteTransactionModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        transaction={transactionToDelete}
       />
     </div>
   );
