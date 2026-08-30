@@ -16,6 +16,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
   const [bankName, setBankName] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [accountHolder, setAccountHolder] = useState('');
+  const [husbandPin, setHusbandPin] = useState('1234');
+  const [wifePin, setWifePin] = useState('1234');
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   useEffect(() => {
@@ -26,6 +28,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
       setBankName(family.bankName || '');
       setAccountNumber(family.accountNumber || '');
       setAccountHolder(family.accountHolder || '');
+      setHusbandPin(family.husbandPin || '1234');
+      setWifePin(family.wifePin || '1234');
       setSavedSuccess(false);
     }
   }, [family, isOpen]);
@@ -41,6 +45,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
       bankName: bankName.trim() || 'BCA Bersama',
       accountNumber: accountNumber.trim(),
       accountHolder: accountHolder.trim(),
+      husbandPin: husbandPin.trim() || '1234',
+      wifePin: wifePin.trim() || '1234',
     });
     setSavedSuccess(true);
     setTimeout(() => {
@@ -60,37 +66,37 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
       <div
-        className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden my-6"
+        className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden my-auto max-h-[92vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-teal-500 text-white">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 sm:p-2 rounded-xl bg-teal-500 text-white shrink-0">
               <Settings className="w-4 h-4" />
             </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white font-heading">
+            <div className="min-w-0">
+              <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white font-heading truncate">
                 Pengaturan Rekening & Pasangan
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Konfigurasi 1 rekening tabungan bersama suami & istri
+              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">
+                Konfigurasi 1 rekening tabungan bersama
               </p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 text-xs overflow-y-auto flex-1">
           {savedSuccess && (
             <div className="p-3 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 rounded-xl border border-emerald-200 dark:border-emerald-800 flex items-center gap-2">
               <Check className="w-4 h-4 text-emerald-600" />
@@ -113,34 +119,66 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
             />
           </div>
 
-          {/* Husband & Wife Names */}
+          {/* Husband & Wife Names & PINs */}
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-blue-700 dark:text-blue-300 mb-1">
-                👨 Panggilan Suami
-              </label>
-              <input
-                type="text"
-                value={husbandName}
-                onChange={(e) => setHusbandName(e.target.value)}
-                placeholder="Suami"
-                className="w-full text-sm px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
+            <div className="space-y-2">
+              <div>
+                <label className="block text-xs font-semibold text-blue-700 dark:text-blue-300 mb-1">
+                  👨 Panggilan Suami
+                </label>
+                <input
+                  type="text"
+                  value={husbandName}
+                  onChange={(e) => setHusbandName(e.target.value)}
+                  placeholder="Suami"
+                  className="w-full text-sm px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-0.5">
+                  🔑 PIN Masuk Suami (4 Digit)
+                </label>
+                <input
+                  type="password"
+                  maxLength={6}
+                  value={husbandPin}
+                  onChange={(e) => setHusbandPin(e.target.value)}
+                  placeholder="1234"
+                  className="w-full text-sm px-3.5 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 tracking-widest"
+                  required
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-pink-700 dark:text-pink-300 mb-1">
-                👩 Panggilan Istri
-              </label>
-              <input
-                type="text"
-                value={wifeName}
-                onChange={(e) => setWifeName(e.target.value)}
-                placeholder="Istri"
-                className="w-full text-sm px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                required
-              />
+            <div className="space-y-2">
+              <div>
+                <label className="block text-xs font-semibold text-pink-700 dark:text-pink-300 mb-1">
+                  👩 Panggilan Istri
+                </label>
+                <input
+                  type="text"
+                  value={wifeName}
+                  onChange={(e) => setWifeName(e.target.value)}
+                  placeholder="Istri"
+                  className="w-full text-sm px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-0.5">
+                  🔑 PIN Masuk Istri (4 Digit)
+                </label>
+                <input
+                  type="password"
+                  maxLength={6}
+                  value={wifePin}
+                  onChange={(e) => setWifePin(e.target.value)}
+                  placeholder="1234"
+                  className="w-full text-sm px-3.5 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-pink-500 tracking-widest"
+                  required
+                />
+              </div>
             </div>
           </div>
 

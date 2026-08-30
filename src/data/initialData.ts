@@ -8,6 +8,8 @@ export const INITIAL_FAMILY: Family = {
   bankName: 'BCA Bersama',
   accountNumber: '8820-1928-3011',
   accountHolder: 'Suami & Istri',
+  husbandPin: '1234',
+  wifePin: '1234',
   createdAt: '2026-01-01',
 };
 

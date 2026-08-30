@@ -54,14 +54,14 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({
       </div>
 
       {/* Big Balance Number */}
-      <div className="relative z-10 my-3">
-        <p className="text-xs sm:text-sm font-medium text-emerald-100/90 dark:text-slate-400 uppercase tracking-wider mb-1">
+      <div className="relative z-10 my-2 sm:my-3">
+        <p className="text-[11px] sm:text-xs font-medium text-emerald-100/90 dark:text-slate-400 uppercase tracking-wider mb-1">
           Total Saldo Tabungan Bersama
         </p>
         <div className="flex items-baseline gap-2">
           <h2
             id="main-joint-balance-display"
-            className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight font-heading text-white"
+            className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight font-heading text-white break-words"
           >
             {formatRupiah(summary.totalBalance, hideBalance)}
           </h2>

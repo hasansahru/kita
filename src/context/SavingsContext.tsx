@@ -24,6 +24,7 @@ import {
 interface SavingsContextType {
   family: Family;
   currentRole: Role;
+  isAuthenticated: boolean;
   goals: SavingsGoal[];
   transactions: Transaction[];
   auditLogs: AuditLog[];
@@ -34,6 +35,8 @@ interface SavingsContextType {
   monthlyBreakdowns: MonthlyBreakdown[];
   
   // Actions
+  loginWithPin: (role: Role, pin: string) => { success: boolean; error?: string };
+  logout: () => void;
   setCurrentRole: (role: Role) => void;
   toggleHideBalance: () => void;
   toggleDarkMode: () => void;
@@ -75,6 +78,7 @@ const STORAGE_KEYS = {
   TRANSACTIONS: 'kita_savings_transactions_v1',
   AUDIT_LOGS: 'kita_savings_audit_logs_v1',
   ROLE: 'kita_savings_current_role_v1',
+  AUTH_SESSION: 'kita_savings_auth_session_v1',
   HIDE_BALANCE: 'kita_savings_hide_balance_v1',
   THEME: 'kita_savings_dark_mode_v1',
 };
@@ -87,6 +91,15 @@ export const SavingsProvider: React.FC<{ children: React.ReactNode }> = ({ child
       return saved ? JSON.parse(saved) : INITIAL_FAMILY;
     } catch {
       return INITIAL_FAMILY;
+    }
+  });
+
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.AUTH_SESSION);
+      return saved === 'true';
+    } catch {
+      return false;
     }
   });
 
@@ -192,6 +205,27 @@ export const SavingsProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, [transactions]);
 
   // Actions
+  const loginWithPin = (role: Role, pin: string): { success: boolean; error?: string } => {
+    const trimmedPin = pin.trim();
+    const expectedPin = role === 'HUSBAND' 
+      ? (family.husbandPin || '1234')
+      : (family.wifePin || '1234');
+    
+    if (trimmedPin === expectedPin) {
+      setCurrentRoleState(role);
+      setIsAuthenticated(true);
+      localStorage.setItem(STORAGE_KEYS.ROLE, role);
+      localStorage.setItem(STORAGE_KEYS.AUTH_SESSION, 'true');
+      return { success: true };
+    }
+    return { success: false, error: 'PIN yang Anda masukkan salah. Coba lagi atau gunakan PIN default 1234.' };
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem(STORAGE_KEYS.AUTH_SESSION);
+  };
+
   const setCurrentRole = (role: Role) => {
     setCurrentRoleState(role);
   };
@@ -424,6 +458,7 @@ export const SavingsProvider: React.FC<{ children: React.ReactNode }> = ({ child
       value={{
         family,
         currentRole,
+        isAuthenticated,
         goals,
         transactions,
         auditLogs,
@@ -432,6 +467,8 @@ export const SavingsProvider: React.FC<{ children: React.ReactNode }> = ({ child
         summary,
         goalBalances,
         monthlyBreakdowns,
+        loginWithPin,
+        logout,
         setCurrentRole,
         toggleHideBalance,
         toggleDarkMode,

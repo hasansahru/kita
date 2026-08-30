@@ -60,38 +60,38 @@ export const DeleteTransactionModal: React.FC<DeleteTransactionModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
       <div
-        className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-rose-200 dark:border-rose-900/50 overflow-hidden my-6"
+        className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-rose-200 dark:border-rose-900/50 overflow-hidden my-auto max-h-[92vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-rose-100 dark:border-rose-950 bg-rose-50/70 dark:bg-rose-950/30">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-rose-600 text-white shadow-sm">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-rose-100 dark:border-rose-950 bg-rose-50/70 dark:bg-rose-950/30 shrink-0">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 sm:p-2 rounded-xl bg-rose-600 text-white shadow-sm shrink-0">
               <Trash2 className="w-4 h-4" />
             </div>
-            <div>
-              <h3 className="text-base font-bold text-rose-950 dark:text-rose-200 font-heading">
+            <div className="min-w-0">
+              <h3 className="text-sm sm:text-base font-bold text-rose-950 dark:text-rose-200 font-heading truncate">
                 Hapus Transaksi
               </h3>
-              <p className="text-xs text-rose-700/80 dark:text-rose-300/80 flex items-center gap-1">
-                <ShieldAlert className="w-3 h-3 text-rose-600 dark:text-rose-400" />
-                <span>Tindakan ini akan tercatat dalam Audit Log</span>
+              <p className="text-[11px] sm:text-xs text-rose-700/80 dark:text-rose-300/80 flex items-center gap-1 truncate">
+                <ShieldAlert className="w-3 h-3 text-rose-600 dark:text-rose-400 shrink-0" />
+                <span>Tercatat dalam Audit Log</span>
               </p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Body Form */}
-        <form onSubmit={handleConfirmDelete} className="p-6 space-y-4">
+        <form onSubmit={handleConfirmDelete} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
           {errorMessage && (
             <div className="p-3 text-xs bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 rounded-xl border border-rose-200 dark:border-rose-800">
               {errorMessage}

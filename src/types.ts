@@ -15,6 +15,8 @@ export interface Family {
   bankName: string;
   accountNumber?: string;
   accountHolder?: string;
+  husbandPin?: string;
+  wifePin?: string;
   createdAt: string;
 }
 

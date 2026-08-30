@@ -8,16 +8,17 @@ import { ConsistencyBanner } from './components/ConsistencyBanner';
 import { SavingsGoalsSection } from './components/SavingsGoalsSection';
 import { TransactionHistory } from './components/TransactionHistory';
 import { AnalyticsSection } from './components/AnalyticsSection';
+import { LoginScreen } from './components/LoginScreen';
 import { TransactionModal } from './components/TransactionModal';
 import { AuditLogModal } from './components/AuditLogModal';
 import { ExportModal } from './components/ExportModal';
 import { SettingsModal } from './components/SettingsModal';
 import { TransactionType } from './types';
 import { formatRupiah, formatDateIndo } from './utils/formatters';
-import { Heart, Plus, Minus, Layers, TrendingUp, Sparkles, Building2 } from 'lucide-react';
+import { Heart, Plus, Minus, Layers, TrendingUp, Sparkles, Building2, Home, Target, PlusCircle, History, BarChart3, Download } from 'lucide-react';
 
 const MainDashboard: React.FC = () => {
-  const { family, summary, transactions, goals, hideBalance } = useSavings();
+  const { family, summary, transactions, goals, hideBalance, isAuthenticated } = useSavings();
 
   // Modals state
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
@@ -30,6 +31,11 @@ const MainDashboard: React.FC = () => {
 
   // Tab view on mobile/desktop
   const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'GOALS' | 'HISTORY' | 'ANALYTICS'>('OVERVIEW');
+
+  // If user is not yet logged in with PIN, show secure login screen
+  if (!isAuthenticated) {
+    return <LoginScreen />;
+  }
 
   const handleOpenDeposit = (goalId?: string) => {
     setTxModalType('DEPOSIT');
@@ -53,7 +59,7 @@ const MainDashboard: React.FC = () => {
       />
 
       {/* 2. Main Content Area */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-7 space-y-5 sm:space-y-6">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-6 py-3 sm:py-7 space-y-4 sm:space-y-6 pb-24 md:pb-8">
         {/* Navigation Tabs on Mobile/Desktop */}
         <div className="flex items-center justify-between gap-2 overflow-x-auto pb-1 no-print border-b border-slate-200 dark:border-slate-800 scrollbar-none">
           <div className="flex items-center gap-1 sm:gap-2">
@@ -264,6 +270,73 @@ const MainDashboard: React.FC = () => {
           </p>
         </div>
       </footer>
+
+      {/* Mobile Fixed Bottom Navigation Bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800/80 px-2 py-1.5 shadow-lg safe-bottom no-print">
+        <div className="flex items-center justify-around">
+          <button
+            type="button"
+            onClick={() => setActiveTab('OVERVIEW')}
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition-colors ${
+              activeTab === 'OVERVIEW'
+                ? 'text-teal-600 dark:text-teal-400 font-bold'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+            }`}
+          >
+            <Home className="w-5 h-5" />
+            <span className="text-[10px] tracking-tight">Ringkasan</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('GOALS')}
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition-colors ${
+              activeTab === 'GOALS'
+                ? 'text-teal-600 dark:text-teal-400 font-bold'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+            }`}
+          >
+            <Target className="w-5 h-5" />
+            <span className="text-[10px] tracking-tight">Target</span>
+          </button>
+
+          {/* Quick Action Add Transaction button */}
+          <button
+            type="button"
+            onClick={() => handleOpenDeposit()}
+            className="flex flex-col items-center -mt-5 bg-gradient-to-tr from-teal-600 to-teal-500 text-white p-3 rounded-full shadow-lg shadow-teal-600/30 hover:scale-105 active:scale-95 transition-all"
+            title="Tambah Setoran"
+          >
+            <Plus className="w-5 h-5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('HISTORY')}
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition-colors ${
+              activeTab === 'HISTORY'
+                ? 'text-teal-600 dark:text-teal-400 font-bold'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+            }`}
+          >
+            <History className="w-5 h-5" />
+            <span className="text-[10px] tracking-tight">Histori</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('ANALYTICS')}
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl transition-colors ${
+              activeTab === 'ANALYTICS'
+                ? 'text-teal-600 dark:text-teal-400 font-bold'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+            }`}
+          >
+            <BarChart3 className="w-5 h-5" />
+            <span className="text-[10px] tracking-tight">Grafik</span>
+          </button>
+        </div>
+      </div>
 
       {/* Modals */}
       <TransactionModal

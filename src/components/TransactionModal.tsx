@@ -222,58 +222,58 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
       <div
-        className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden my-6"
+        className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden my-auto max-h-[92vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header with Type Selector */}
-        <div className="px-6 pt-5 pb-4 border-b border-slate-200 dark:border-slate-800">
-          <div className="flex items-center justify-between gap-2 mb-3">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white font-heading">
+        <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3 sm:pb-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
+          <div className="flex items-center justify-between gap-2 mb-2.5 sm:mb-3">
+            <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white font-heading">
               Catat Transaksi Tabungan Bersama
             </h3>
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Type Switcher Tabs */}
-          <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
+          <div className="grid grid-cols-2 gap-1.5 sm:gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
             <button
               type="button"
               onClick={() => setType('DEPOSIT')}
-              className={`flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center justify-center gap-1.5 sm:gap-2 py-2 rounded-lg text-xs font-bold transition-all ${
                 type === 'DEPOSIT'
                   ? 'bg-emerald-500 text-white shadow-sm'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <ArrowDownLeft className="w-4 h-4" />
-              <span>+ Setoran (Uang Masuk)</span>
+              <span>+ Setoran</span>
             </button>
 
             <button
               type="button"
               onClick={() => setType('WITHDRAWAL')}
-              className={`flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center justify-center gap-1.5 sm:gap-2 py-2 rounded-lg text-xs font-bold transition-all ${
                 type === 'WITHDRAWAL'
                   ? 'bg-rose-500 text-white shadow-sm'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <ArrowUpRight className="w-4 h-4" />
-              <span>- Penarikan (Uang Keluar)</span>
+              <span>- Penarikan</span>
             </button>
           </div>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
           {errorMessage && (
             <div className="p-3 text-xs bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 rounded-xl border border-rose-200 dark:border-rose-800 flex items-start gap-2">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />

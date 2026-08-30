@@ -162,12 +162,12 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           </div>
 
           {/* Filter Pills / Selects */}
-          <div className="flex flex-wrap items-center gap-2 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
             {/* Role Filter */}
             <select
               value={filterRole}
               onChange={(e) => setFilterRole(e.target.value as any)}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium focus:outline-none focus:ring-1 focus:ring-teal-500"
             >
               <option value="ALL">Semua Pelaku (Suami & Istri)</option>
               <option value="HUSBAND">👨 {family.husbandName} (Suami)</option>
@@ -178,9 +178,9 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value as any)}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium focus:outline-none focus:ring-1 focus:ring-teal-500"
             >
-              <option value="ALL">Semua Jenis (Setoran & Penarikan)</option>
+              <option value="ALL">Semua Jenis (Setoran & Tarik)</option>
               <option value="DEPOSIT">📥 Hanya Setoran</option>
               <option value="WITHDRAWAL">📤 Hanya Penarikan</option>
             </select>
@@ -189,7 +189,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
             <select
               value={filterGoalId}
               onChange={(e) => setFilterGoalId(e.target.value)}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium focus:outline-none focus:ring-1 focus:ring-teal-500"
+              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium focus:outline-none focus:ring-1 focus:ring-teal-500"
             >
               <option value="ALL">Semua Pos Target</option>
               {goals.map((g) => (
@@ -205,7 +205,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
               <select
                 value={filterMonth}
                 onChange={(e) => setFilterMonth(e.target.value)}
-                className="px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium focus:outline-none focus:ring-1 focus:ring-teal-500"
+                className="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium focus:outline-none focus:ring-1 focus:ring-teal-500"
               >
                 <option value="ALL">Semua Bulan</option>
                 {availableMonths.map((m) => (
@@ -215,9 +215,11 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                 ))}
               </select>
             )}
+          </div>
 
-            {/* Reset Filters button if any active */}
-            {(filterRole !== 'ALL' || filterType !== 'ALL' || filterGoalId !== 'ALL' || filterMonth !== 'ALL' || searchQuery) && (
+          {/* Reset Filters button if any active */}
+          {(filterRole !== 'ALL' || filterType !== 'ALL' || filterGoalId !== 'ALL' || filterMonth !== 'ALL' || searchQuery) && (
+            <div className="flex justify-end pt-1">
               <button
                 type="button"
                 onClick={() => {
@@ -229,10 +231,10 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                 }}
                 className="text-[11px] font-semibold text-rose-600 dark:text-rose-400 hover:underline px-1.5"
               >
-                Reset Filter
+                Reset Semua Filter
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
 
