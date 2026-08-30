@@ -187,15 +187,25 @@ export const Header: React.FC<HeaderProps> = ({
             <Download className="w-4 h-4" />
           </button>
 
-          {/* Dark Mode Toggle */}
+          {/* Dark / Light Mode Toggle Button */}
           <button
             id="toggle-theme-button"
             type="button"
             onClick={toggleDarkMode}
-            className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
-            title={isDarkMode ? 'Mode Terang' : 'Mode Gelap'}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-all shadow-xs"
+            title={isDarkMode ? 'Klik untuk beralih ke Mode Terang' : 'Klik untuk beralih ke Mode Gelap'}
           >
-            {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
+            {isDarkMode ? (
+              <>
+                <Sun className="w-4 h-4 text-amber-400 animate-in spin-in-90 duration-200" />
+                <span className="hidden sm:inline">Terang</span>
+              </>
+            ) : (
+              <>
+                <Moon className="w-4 h-4 text-indigo-600 dark:text-indigo-400 animate-in spin-in-90 duration-200" />
+                <span className="hidden sm:inline">Gelap</span>
+              </>
+            )}
           </button>
 
           {/* Settings Trigger */}
